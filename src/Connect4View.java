@@ -5,6 +5,9 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -32,6 +35,12 @@ public class Connect4View extends Application implements Observer {
 		stage.setTitle("Connect 4");
 				
 		GridPane grid = new GridPane();
+		Menu     menu = new Menu("File");
+		MenuItem menuItem = new MenuItem("New Game");
+		
+		MenuBar menuBar = new MenuBar();
+		 menuBar.getMenus().add(menu);
+		 menu.getItems().add(menuItem);
 		
 		int row = 0;
 		int col = 0;
@@ -55,6 +64,8 @@ public class Connect4View extends Application implements Observer {
 		
 	grid.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 	grid.setPadding(new Insets(10));
+	
+	grid.add(menuBar, 0, 0);
 	
 	Scene scene = new Scene(grid, 350, 310); 
 	stage.setScene(scene);
