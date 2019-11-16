@@ -54,4 +54,34 @@ public class Connect4Model extends Observable {
 			board[row][col] = token;
 		}
 	}
+	
+	/**
+	 * Checks the current state of the board for any victories.
+	 * @return 0 for none, 1 for yellow, 2 for red victory
+	 */
+	public int checkVictory() {
+		
+	}
+	private int checkRight(int row, int col) {
+		int token = board[row][col];
+		if (token == 0) { return 0; }
+		for (int i = 1; i < 4; i++) {
+			if (token != board[row][col + 1]) {
+				return 0;
+			}
+		}
+		return token;
+	}
+	private int checkLeft(int row, int col) {
+		
+	}
+	private int checkDown(int row, int col) {
+		
+	}
+	private int checkDownRight(int row, int col) {
+		
+	}
+	private int checkDownLeft(int row, int col) {
+		
+	}
 }
