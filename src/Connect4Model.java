@@ -15,14 +15,19 @@ public class Connect4Model extends Observable {
 	public Connect4Model() {
 		row = 6;
 		col = 7;
-		board = new int[row][col];
+		initializeBoard();
 	}
 	
 	/**
-	 * Clears the old board, for starting new games.
+	 * Clears the board, for starting new games.
 	 */
-	public void clearBoard() {
+	public void initializeBoard() {
 		board = new int[row][col];
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				board[row][col] = 0;
+			}
+		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
 		notifyObservers();
 	}
