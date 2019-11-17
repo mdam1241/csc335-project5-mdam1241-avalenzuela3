@@ -10,10 +10,21 @@ import org.junit.jupiter.api.Test;
 public class Connect4Tests {
 	
 	@Test
-	void testBoardVictoryDown() {
+	void testTopRightBoardVictoryDown() {
 		Connect4Model board = new Connect4Model();
 		for (int i = 0; i < 4; i++) {
-			board.getBoard()[i][0] = 1;
+			board.getBoard()[i][6] = 1;
+		}
+		board.printDebug();
+		assertTrue(board.checkVictory() == 1);
+	}
+	
+
+	@Test
+	void testTopLeftBoardVictoryDown() {
+		Connect4Model board = new Connect4Model();
+		for (int i = 0; i < 4; i++) {
+			board.getBoard()[i][1] = 1;
 		}
 		board.printDebug();
 		assertTrue(board.checkVictory() == 1);
@@ -54,6 +65,7 @@ public class Connect4Tests {
 		Connect4Model board = new Connect4Model();
 		assertFalse(board.dropToken(0,0)); // Tried to drop an "empty" token
 		assertFalse(board.dropToken(1, -1)); // Tried to drop a token out of bounds
+		assertFalse(board.dropToken(2, 7)); // Tried to drop a token out of bounds
 		board.dropToken(1, 0);
 		board.dropToken(1, 0);
 		board.dropToken(1,1);

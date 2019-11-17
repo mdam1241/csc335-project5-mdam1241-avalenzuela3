@@ -43,7 +43,7 @@ public class Connect4Model extends Observable {
 	 * @return false if dropToken failed (including bound errors, or simply a full column), true if dropToken succeeded
 	 */
 	public boolean dropToken(int token, int col) {
-		if (col < 0 || col > this.col) {
+		if (col < 0 || col >= this.col) {
 			System.err.println("Gave dropToken() a column out of bounds");
 			return false;
 		}
