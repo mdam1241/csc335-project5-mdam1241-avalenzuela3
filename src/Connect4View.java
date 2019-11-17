@@ -2,9 +2,11 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -25,18 +27,29 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
+	GridPane grid = new GridPane();
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
+	public void update(Observable observable, Object moveMsg) {
+        Connect4MoveMessage playerMove = (Connect4MoveMessage) moveMsg;
+        ObservableList<Node> spots = grid.getChildren();
+        int r = 0;
+        int c = 0;
+        for (Node node : spots) {
+            if(grid.getRowIndex(node) == playerMove.getRow() && grid.getColumnIndex(node) == playerMove.getColumn())
+            {
+            	// below statement is for testing correct spot clicked
+            	System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
+                break;
+            }
+        
+	}
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
-
-		GridPane grid = new GridPane();
+    
 		Menu menu = new Menu("File");
 		MenuItem menuItem = new MenuItem("New Game");
 
@@ -79,18 +92,18 @@ public class Connect4View extends Application implements Observer {
 			public void handle(MouseEvent event) {
 				double xCoord = event.getX();
 				int column;
-				double firstCol = 52.0;
-				if (xCoord < firstCol)
+				double firstColumn = 52.0;
+				if (xCoord < firstColumn)
 					column = 0;
-				else if (xCoord < firstCol + 50)
+				else if (xCoord < firstColumn + 50)
 					column = 1;
-				else if (xCoord < firstCol + 100)
+				else if (xCoord < firstColumn + 100)
 					column = 2;
-				else if (xCoord < firstCol + 150)
+				else if (xCoord < firstColumn + 150)
 					column = 3;
-				else if (xCoord < firstCol + 200)
+				else if (xCoord < firstColumn + 200)
 					column = 4;
-				else if (xCoord < firstCol + 250)
+				else if (xCoord < firstColumn + 250)
 					column = 5;
 				else
 					column = 6;
@@ -99,12 +112,15 @@ public class Connect4View extends Application implements Observer {
 				// Must now write code to send column # to Controller.
 			}
 		});
-
-		BorderPane border = new BorderPane();
-		border.setCenter(grid);
-		border.setTop(menuBox);
-		Scene scene = new Scene(border, 350, 340);
+		
+		// setting menu bar and connect4 board
+		BorderPane gameBoard = new BorderPane();
+		gameBoard.setCenter(grid);
+		gameBoard.setTop(menuBox);
+		
+		Scene scene = new Scene(gameBoard, 350, 340);
 		stage.setScene(scene);
+		
 		// show the running app:
 		stage.show();
 	}
