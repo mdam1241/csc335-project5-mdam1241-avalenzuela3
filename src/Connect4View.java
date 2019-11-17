@@ -2,12 +2,14 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -24,11 +26,11 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
-	
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class Connect4View extends Application implements Observer {
 		 
 		 VBox menuBox = new VBox(menuBar);
 		
-		 
+	
 		int row = 0;
 		int col = 0;
 		for (int i = 0; i < 42; i++) {
@@ -62,6 +64,14 @@ public class Connect4View extends Application implements Observer {
 			VBox box = new VBox(circle);
 			
 			box.setCenterShape(true);
+			
+	        box.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println("CLICKED" + event.getX());
+				}
+			});
 
 			grid.add(box, col, row);
 			col++;
