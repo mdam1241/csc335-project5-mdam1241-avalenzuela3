@@ -2,11 +2,17 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -20,19 +26,32 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
-	
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
+		
 				
 		GridPane grid = new GridPane();
+		Menu     menu = new Menu("File");
+		MenuItem menuItem = new MenuItem("New Game");
 		
+		MenuBar menuBar = new MenuBar();
+	
+		menuBar.prefWidthProperty().bind(stage.widthProperty());
+
+		 menuBar.getMenus().add(menu);
+		 menu.getItems().add(menuItem);
+		 
+		 VBox menuBox = new VBox(menuBar);
+		
+	
 		int row = 0;
 		int col = 0;
 		for (int i = 0; i < 42; i++) {
@@ -45,6 +64,14 @@ public class Connect4View extends Application implements Observer {
 			VBox box = new VBox(circle);
 			
 			box.setCenterShape(true);
+			
+	        box.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println("CLICKED" + event.getX());
+				}
+			});
 
 			grid.add(box, col, row);
 			col++;
@@ -55,8 +82,11 @@ public class Connect4View extends Application implements Observer {
 		
 	grid.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 	grid.setPadding(new Insets(10));
-	
-	Scene scene = new Scene(grid, 350, 310); 
+
+	BorderPane border = new BorderPane();
+	border.setCenter(grid);
+	border.setTop(menuBox);
+	Scene scene = new Scene(border, 370, 310); 
 	stage.setScene(scene);
 	// show the running app:
 	stage.show();
