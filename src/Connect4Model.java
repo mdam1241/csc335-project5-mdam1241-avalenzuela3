@@ -25,7 +25,7 @@ public class Connect4Model extends Observable {
 		board = new int[row][col];
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
-				board[row][col] = 0;
+				board[i][j] = 0;
 			}
 		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
@@ -39,15 +39,15 @@ public class Connect4Model extends Observable {
 	/**
 	 * Drops a token in a column.
 	 * @param col an int telling which column to drop token in.
-	 * @param chip an int telling what type of token to use (1 = YELLOW, 2 = RED)
+	 * @param token an int telling what type of token to use (1 = YELLOW, 2 = RED)
 	 */
 	public void dropToken(int token, int col) {
 		if (col < 0 || col > this.col) {
-			System.err.print("Gave dropRed() a column out of bounds");
+			System.err.println("Gave dropToken() a column out of bounds");
 			return;
 		}
-		if (token != 1 || token != 2) {
-			System.err.print("Gave an invalid number for type of token");
+		if (token != 1 && token != 2) {
+			System.err.println("Gave an invalid number for type of token");
 			return;
 		}
 		int i = 0;
@@ -59,8 +59,8 @@ public class Connect4Model extends Observable {
 			}
 			i++;
 		}
-		if (dropped = false) {
-			board[row][col] = token;
+		if (!dropped) {
+			board[row - 1][this.col - 1] = token;
 		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
 		notifyObservers();
@@ -98,10 +98,11 @@ public class Connect4Model extends Observable {
 	public void printDebug() {
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
-				System.out.print(board[row][col]);
+				System.out.print(board[i][j]);
 			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 	
 	private int checkRight(int row, int col) {
