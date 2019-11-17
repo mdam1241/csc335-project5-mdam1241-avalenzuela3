@@ -62,7 +62,6 @@ public class Connect4Model extends Observable {
 	 * @return 0 for none, 1 for yellow, 2 for red victory
 	 */
 	public int checkVictory() {
-		int token = 0;
 		for (int i = 0; i < row - 3; i++) {
 			for (int j = 0; j < col - 3; j++) {
 				// Check top left corner of board
