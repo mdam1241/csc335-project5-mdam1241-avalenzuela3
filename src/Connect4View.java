@@ -17,7 +17,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 /**
@@ -36,59 +35,77 @@ public class Connect4View extends Application implements Observer {
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
-		
-				
+
 		GridPane grid = new GridPane();
-		Menu     menu = new Menu("File");
+		Menu menu = new Menu("File");
 		MenuItem menuItem = new MenuItem("New Game");
-		
+
 		MenuBar menuBar = new MenuBar();
-	
+
 		menuBar.prefWidthProperty().bind(stage.widthProperty());
 
-		 menuBar.getMenus().add(menu);
-		 menu.getItems().add(menuItem);
-		 
-		 VBox menuBox = new VBox(menuBar);
-		
-	
+		menuBar.getMenus().add(menu);
+		menu.getItems().add(menuItem);
+
+		VBox menuBox = new VBox(menuBar);
+
 		int row = 0;
 		int col = 0;
 		for (int i = 0; i < 42; i++) {
 			if (i % 7 == 0) {
-				row ++;
+				row++;
 				col = 0;
 			}
-			
+
 			Circle circle = new Circle(20, Color.WHITE);
 			VBox box = new VBox(circle);
-			
-			box.setCenterShape(true);
-			
-	        box.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
-				@Override
-				public void handle(MouseEvent event) {
-					System.out.println("CLICKED" + event.getX());
-				}
-			});
+			box.setCenterShape(true);
 
 			grid.add(box, col, row);
 			col++;
-	}
-		
-	grid.setVgap(8);
-	grid.setHgap(8);
-		
-	grid.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-	grid.setPadding(new Insets(10));
+		}
 
-	BorderPane border = new BorderPane();
-	border.setCenter(grid);
-	border.setTop(menuBox);
-	Scene scene = new Scene(border, 370, 310); 
-	stage.setScene(scene);
-	// show the running app:
-	stage.show();
-}
+		grid.setVgap(8);
+		grid.setHgap(8);
+
+		grid.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+		grid.setPadding(new Insets(10));
+
+		// adding EventHandler to the entire grid
+		grid.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				double xCoord = event.getX();
+				int column;
+				double firstCol = 52.0;
+				if (xCoord < firstCol)
+					column = 0;
+				else if (xCoord < firstCol + 50)
+					column = 1;
+				else if (xCoord < firstCol + 100)
+					column = 2;
+				else if (xCoord < firstCol + 150)
+					column = 3;
+				else if (xCoord < firstCol + 200)
+					column = 4;
+				else if (xCoord < firstCol + 250)
+					column = 5;
+				else
+					column = 6;
+		
+				
+				// Must now write code to send column # to Controller.
+			}
+		});
+
+		BorderPane border = new BorderPane();
+		border.setCenter(grid);
+		border.setTop(menuBox);
+		Scene scene = new Scene(border, 350, 340);
+		stage.setScene(scene);
+		// show the running app:
+		stage.show();
+	}
 }
