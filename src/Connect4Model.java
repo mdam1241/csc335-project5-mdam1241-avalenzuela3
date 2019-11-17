@@ -40,15 +40,20 @@ public class Connect4Model extends Observable {
 	 * Drops a token in a column.
 	 * @param col an int telling which column to drop token in.
 	 * @param token an int telling what type of token to use (1 = YELLOW, 2 = RED)
+	 * @return false if dropToken failed (including bound errors, or simply a full column), true if dropToken succeeded
 	 */
-	public void dropToken(int token, int col) {
+	public boolean dropToken(int token, int col) {
 		if (col < 0 || col > this.col) {
 			System.err.println("Gave dropToken() a column out of bounds");
-			return;
+			return false;
 		}
 		if (token != 1 && token != 2) {
 			System.err.println("Gave an invalid number for type of token");
-			return;
+			return false;
+		}
+		if (board[0][col] > 0) {
+			// The column you tried to drop a token in is full!
+			return false;
 		}
 		int i = 0;
 		boolean dropped = false;
@@ -60,10 +65,11 @@ public class Connect4Model extends Observable {
 			i++;
 		}
 		if (!dropped) {
-			board[row - 1][this.col - 1] = token;
+			board[row - 1][col] = token;
 		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
 		notifyObservers();
+		return true;
 	}
 	
 	/**

@@ -52,16 +52,22 @@ public class Connect4Tests {
 	@Test
 	void testDrop() {
 		Connect4Model board = new Connect4Model();
+		assertFalse(board.dropToken(0,0)); // Tried to drop an "empty" token
+		assertFalse(board.dropToken(1, -1)); // Tried to drop a token out of bounds
 		board.dropToken(1, 0);
 		board.dropToken(1, 0);
 		board.dropToken(1,1);
 		board.dropToken(2, 6);
-		board.printDebug();
 		assertFalse(board.checkVictory() > 0);
 		board.dropToken(1, 0);
 		board.dropToken(2, 0);
 		board.dropToken(1, 0);
-		board.printDebug();
 		assertFalse(board.checkVictory() > 0);
+		assertTrue(board.dropToken(1,0)); // Fill the last slot in column 1, dropToken is true
+		assertFalse(board.dropToken(1,0)); // Cannot fit another token in column 1, dropToken is false
+		board.dropToken(1, 2);
+		board.dropToken(1, 3);
+		assertTrue(board.checkVictory() == 1);
+		board.printDebug();
 	}
 }
