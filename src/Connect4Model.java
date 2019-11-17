@@ -68,7 +68,9 @@ public class Connect4Model extends Observable {
 			board[row - 1][col] = token;
 		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
-		notifyObservers();
+		Connect4MoveMessage moveMsg = new Connect4MoveMessage(row, col, token);
+		setChanged();
+		notifyObservers(moveMsg);
 		return true;
 	}
 	
