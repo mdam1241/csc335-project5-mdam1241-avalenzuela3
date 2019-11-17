@@ -28,8 +28,10 @@ public class Connect4Model extends Observable {
 				board[i][j] = 0;
 			}
 		}
-		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
-		notifyObservers();
+		// last parameter of Connect4MoveMessage tells the View it is a new game.
+		Connect4MoveMessage newGame =  new Connect4MoveMessage(0,0,0);
+		setChanged();
+		notifyObservers(newGame);
 	}
 	
 	public int[][] getBoard() {

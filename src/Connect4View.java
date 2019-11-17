@@ -27,70 +27,105 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
-	GridPane grid = new GridPane();
+	public GridPane grid = new GridPane();
+	public Connect4Model model = new Connect4Model();
+	public Connect4Controller controller = new Connect4Controller(model, this);
+
+	public Connect4View(Connect4Model model, Connect4Controller controller) {
+		this.controller = controller;
+		this.model = model;
+		this.model.addObserver(this);
+	}
 
 	@Override
 	public void update(Observable observable, Object moveMsg) {
-        Connect4MoveMessage playerMove = (Connect4MoveMessage) moveMsg;
-        ObservableList<Node> spots = grid.getChildren();
-        int r = 0;
-        int c = 0;
-        for (Node node : spots) {
-            if(grid.getRowIndex(node) == playerMove.getRow() && grid.getColumnIndex(node) == playerMove.getColumn())
-            {
-            	// below statement is for testing correct spot clicked
-            	System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
-                break;
-            }
-        
+		Connect4MoveMessage playerMove = (Connect4MoveMessage) moveMsg;
+		ObservableList<Node> slots = grid.getChildren();
+		
+		if (playerMove.getColor() == 0) {
+			this.newGame(slots);
+		}
+		else {
+			
+		for (Node node : slots) {
+			if (GridPane.getRowIndex(node) == playerMove.getRow() && GridPane.getColumnIndex(node) == playerMove.getColumn()) {
+				// below statement is for testing correct spot chosen after user clicks a column
+				System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
+				Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0);
+				if (playerMove.getColor() == playerMove.YELLOW)
+					currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
+				else
+					currentSpot.setFill(javafx.scene.paint.Color.RED);
+				break;
+			}
+		}
+		}
+		
+		
 	}
+	
+	
+	/**
+	 * Iterates through all the children of the GridPane that are Circle objects and changes the color of them to white 
+	 * to indicate a new game
+	 *
+	 * @param slots ObservableList of Nodes that represent the circle slots in the board.
+	 */
+	private void newGame(ObservableList<Node> slots) {
+		for (Node node : slots) {
+			Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0);
+			currentSpot.setFill(javafx.scene.paint.Color.WHITE);
+		}
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
-
-		Menu menu = new Menu("File");
-		MenuItem menuItem = new MenuItem("New Game");
-
-		MenuBar menuBar = new MenuBar();
-
-		menuBar.prefWidthProperty().bind(stage.widthProperty());
-
-		menuBar.getMenus().add(menu);
-		menu.getItems().add(menuItem);
-
+		MenuBar menuBar = createMenuBar(stage);
 		VBox menuBox = new VBox(menuBar);
 
-		int row = 0;
-		int col = 0;
-		for (int i = 0; i < 42; i++) {
-			if (i % 7 == 0) {
-				row++;
-				col = 0;
-			}
+		createConnect4Slots();
+		setBoardConstraintsAndColor();
+		addOnClickEventToGrid();
 
-			Circle circle = new Circle(20, Color.WHITE);
-			VBox box = new VBox(circle);
+		// setting menu bar and connect4 board
+		BorderPane gameBoard = new BorderPane();
+		gameBoard.setCenter(grid);
+		gameBoard.setTop(menuBox);
 
-			box.setCenterShape(true);
+		Scene scene = new Scene(gameBoard, 350, 340);
+		stage.setScene(scene);
 
-			grid.add(box, col, row);
-			col++;
-		}
+		// show the running app:
+		stage.show();
+	}
 
+	private void setBoardConstraintsAndColor() {
 		grid.setVgap(8);
 		grid.setHgap(8);
-
 		grid.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 		grid.setPadding(new Insets(10));
+	}
 
+	private void addOnClickEventToGrid() {
 		// adding EventHandler to the entire grid
 		grid.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				double xCoord = event.getX();
+				int column = calculateColumnClicked(xCoord);
+				
+				// Must now write code to send column # to Controller.
+			}
+
+			/**
+			 * Calculates the column number that was clicked by the user and returns it.
+			 * 
+			 * @param xCoord x-coordinate where the user clicked
+			 * @return column number that was clicked
+			 */
+			private int calculateColumnClicked(double xCoord) {
 				int column;
 				double firstColumn = 52.0;
 				if (xCoord < firstColumn)
@@ -107,21 +142,43 @@ public class Connect4View extends Application implements Observer {
 					column = 5;
 				else
 					column = 6;
-		
-				
-				// Must now write code to send column # to Controller.
+				return column;
 			}
 		});
-		
-		// setting menu bar and connect4 board
-		BorderPane gameBoard = new BorderPane();
-		gameBoard.setCenter(grid);
-		gameBoard.setTop(menuBox);
-		
-		Scene scene = new Scene(gameBoard, 350, 340);
-		stage.setScene(scene);
-		
-		// show the running app:
-		stage.show();
 	}
+
+	private void createConnect4Slots() {
+		int row = 0;
+		int col = 0;
+		for (int i = 0; i < 42; i++) {
+			if (i % 7 == 0) {
+				row++;
+				col = 0;
+			}
+
+			Circle circle = new Circle(20, Color.WHITE);
+			VBox box = new VBox(circle);
+
+			box.setCenterShape(true);
+
+			grid.add(box, col, row);
+			col++;
+		}
+	}
+
+	private MenuBar createMenuBar(Stage stage) {
+		Menu menu = new Menu("File");
+		MenuItem menuItem = new MenuItem("New Game");
+
+		MenuBar menuBar = new MenuBar();
+
+		menuBar.prefWidthProperty().bind(stage.widthProperty());
+
+		menuBar.getMenus().add(menu);
+		menu.getItems().add(menuItem);
+		return menuBar;
+	}
+	
+	
+
 }
