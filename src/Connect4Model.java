@@ -8,7 +8,9 @@ import java.util.Observable;
 public class Connect4Model extends Observable {
 	private int row; 		// # of rows in board
 	private int col; 		// # of columns in board
-	private int[][] board;	// 0 means empty, 1 means yellow, 2 means red
+	private int[][] board;	// board[0][0] gives the token at the very top left of the board.
+							// board[row][col] gives the token at the bottom right.
+							// For token types: 0 = empty, 1 = yellow, 2 = red
 	
 	public Connect4Model() {
 		row = 6;
@@ -60,28 +62,60 @@ public class Connect4Model extends Observable {
 	 * @return 0 for none, 1 for yellow, 2 for red victory
 	 */
 	public int checkVictory() {
-		
+		int token = 0;
+		for (int i = 0; i < row - 3; i++) {
+			for (int j = 0; j < col - 3; j++) {
+				// Check top left corner of board
+				if (checkRight(i,j) != 0) { return checkRight(i,j); }
+				if (checkDown(i,j) != 0) { return checkDown(i,j); }
+				if (checkDownRight(i,j) != 0) { return checkDownRight(i,j); }
+			}
+		}
+		for (int i = 3; i < row; i++) {
+			for (int j = 0; j < col - 3; j++) {
+				// Check bottom left corner of board
+				if (checkUpRight(i,j) != 0) { return checkUpRight(i,j); }
+				if (checkRight(i,j) != 0) { return checkRight(i,j); }
+			}
+		}
+		for (int i = 0; i < row - 3; i++) {
+			for (int j = 3; j < col; j++) {
+				// Check top right corner of board
+				if (checkDown(i,j) != 0) { return checkDown(i,j); }
+			}
+		}
+		return 0;
 	}
 	private int checkRight(int row, int col) {
 		int token = board[row][col];
 		if (token == 0) { return 0; }
 		for (int i = 1; i < 4; i++) {
-			if (token != board[row][col + 1]) {
-				return 0;
-			}
+			if (token != board[row][col + i]) { return 0; }
 		}
 		return token;
 	}
-	private int checkLeft(int row, int col) {
-		
-	}
 	private int checkDown(int row, int col) {
-		
+		int token = board[row][col];
+		if (token == 0) { return 0; }
+		for (int i = 1; i < 4; i++) {
+			if (token != board[row + i][col]) { return 0; }
+		}
+		return token;
 	}
 	private int checkDownRight(int row, int col) {
-		
+		int token = board[row][col];
+		if (token == 0) { return 0; }
+		for (int i = 1; i < 4; i++) {
+			if (token != board[row + i][col + i]) { return 0; }
+		}
+		return token;
 	}
-	private int checkDownLeft(int row, int col) {
-		
+	private int checkUpRight(int row, int col) {
+		int token = board[row][col];
+		if (token == 0) { return 0; }
+		for (int i = 1; i < 4; i++) {
+			if (token != board[row - i][col + i]) { return 0; }
+		}
+		return token;
 	}
 }
