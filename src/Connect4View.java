@@ -49,7 +49,7 @@ public class Connect4View extends Application implements Observer {
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
-
+    
 		Menu menu = new Menu("File");
 		MenuItem menuItem = new MenuItem("New Game");
 
