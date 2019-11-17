@@ -23,6 +23,8 @@ public class Connect4Model extends Observable {
 	 */
 	public void clearBoard() {
 		board = new int[row][col];
+		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
+		notifyObservers();
 	}
 	
 	public int[][] getBoard() {
@@ -55,6 +57,8 @@ public class Connect4Model extends Observable {
 		if (dropped = false) {
 			board[row][col] = token;
 		}
+		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
+		notifyObservers();
 	}
 	
 	/**
@@ -85,6 +89,16 @@ public class Connect4Model extends Observable {
 		}
 		return 0;
 	}
+	
+	public void printDebug() {
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				System.out.print(board[row][col]);
+			}
+			System.out.println();
+		}
+	}
+	
 	private int checkRight(int row, int col) {
 		int token = board[row][col];
 		if (token == 0) { return 0; }
