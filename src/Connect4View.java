@@ -82,6 +82,7 @@ public class Connect4View extends Application implements Observer {
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
 		MenuBar menuBar = createMenuBar(stage);
+
 		VBox menuBox = new VBox(menuBar);
 
 		createConnect4Slots();
