@@ -16,6 +16,9 @@ public class Connect4Controller {
 		this.model = model;
 	}
 
+	/**
+	 * Calls the model's initiliazeBoardMethod() to clear all the slots
+	 */
 	public void newGame() {
 		model.initializeBoard();
 	}
@@ -28,6 +31,13 @@ public class Connect4Controller {
 		// TODO
 	}
 
+	/**
+	 * This method is called by the View when a column has been clicked by the user. 
+	 * The controller determines whether the column clicked is full or not and changes 
+	 * the model if is not. If it is, it displays an Error message
+	 * 
+	 * @param moveObj Object containing a player's token color and the move they made.
+	 */
 	public void moveMade(Connect4MoveMessage moveObj) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Error");

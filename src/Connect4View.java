@@ -38,46 +38,56 @@ public class Connect4View extends Application implements Observer {
 		this.model.addObserver(this);
 	}
 
+	/**
+	 * This method is called when a change has been made in the Model in cases where a player makes a move,
+	 * a winner has been determined, or a new game has been requested to start. It iterates through an enhanced 
+	 * for loop of the GridPane's children that represent the Connect 4 board in order to change the correct slot.
+	 */
 	@Override
 	public void update(Observable observable, Object moveMsg) {
 		Connect4MoveMessage playerMove = (Connect4MoveMessage) moveMsg;
 		ObservableList<Node> slots = grid.getChildren();
-		
-		if (playerMove.getColor() == 0) {
+
+		if (playerMove.getColor() == 0) { // New game requested
 			this.newGame(slots);
-		}
-		else {
-		for (Node node : slots) {
-			if (GridPane.getRowIndex(node) == playerMove.getRow() && GridPane.getColumnIndex(node) == playerMove.getColumn()) {
-				// below statement is for testing correct spot chosen after user clicks a column
-				System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
-				
-				Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0);
-				if (playerMove.getColor() == playerMove.YELLOW)
-					currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
-				else
-					currentSpot.setFill(javafx.scene.paint.Color.RED);
-				break;
+		} else {
+			for (Node node : slots) {
+				if (GridPane.getRowIndex(node) == playerMove.getRow()
+						&& GridPane.getColumnIndex(node) == playerMove.getColumn()) {
+					// below statement is for testing correct spot chosen after user clicks a column
+					System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
+
+					Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0); // Current Circle Object
+					if (playerMove.getColor() == playerMove.YELLOW) {
+						currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
+						break;
+					}
+					else {
+						currentSpot.setFill(javafx.scene.paint.Color.RED);
+						break;
+				}
 			}
 		}
+		int winnerNum = ((Connect4Model) observable).checkVictory(); // Number that represents the winner
+
+		if (winnerNum != 0) { // check for a potential winner
+			displayWinner(winnerNum);
 		}
-		
-			int winnerNum = ((Connect4Model) observable).checkVictory();
-			
-			if (winnerNum != 0) {
-				displayWinner(winnerNum);
-			}
-		
 	}
-	
-	
+	}
+
+	/**
+	 * Displays an Alert box that notifies the user they've won. Still needs code to determine who is the winner.
+	 * 
+	 * @param winnerNum integer representing the winner.
+	 */
 	private void displayWinner(int winnerNum) {
 		String winner = null;
 		if (winnerNum == 1)
 			winner = "Player 1";
 		else
 			winner = "Player 2";
-		
+
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Message");
 		alert.setHeaderText("Message");
@@ -85,10 +95,11 @@ public class Connect4View extends Application implements Observer {
 	}
 
 	/**
-	 * Iterates through all the children of the GridPane that are Circle objects and changes the color of them to white 
-	 * to indicate a new game
+	 * Iterates through all the children of the GridPane that are Circle objects and
+	 * changes the color of them to white to indicate a new game
 	 *
-	 * @param slots ObservableList of Nodes that represent the circle slots in the board.
+	 * @param slots ObservableList of Nodes that represent the circle slots in the
+	 *              board.
 	 */
 	private void newGame(ObservableList<Node> slots) {
 		for (Node node : slots) {
@@ -97,6 +108,7 @@ public class Connect4View extends Application implements Observer {
 		}
 	}
 
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
@@ -120,6 +132,9 @@ public class Connect4View extends Application implements Observer {
 		stage.show();
 	}
 
+	/**
+	 * Sets the constraints on the Connect 4 game board
+	 */
 	private void setBoardConstraintsAndColor() {
 		grid.setVgap(8);
 		grid.setHgap(8);
@@ -127,6 +142,11 @@ public class Connect4View extends Application implements Observer {
 		grid.setPadding(new Insets(10));
 	}
 
+	/**
+	 * Adds an onClickEvent to the entire grid and calculates what column and row
+	 * the user just clicked on. Sends a message to the Controller using a
+	 * Connect4MoveMessage object to indicate a player has made a move.
+	 */
 	private void addOnClickEventToGrid() {
 		// adding EventHandler to the entire grid
 		grid.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -140,7 +160,7 @@ public class Connect4View extends Application implements Observer {
 				int column = calculateColumnClicked(xCoord);
 				System.out.println(event.getY());
 				Connect4MoveMessage moveObj = new Connect4MoveMessage(0, column, row);
-				controller.moveMade(moveObj);				
+				controller.moveMade(moveObj);
 			}
 
 			/**
@@ -171,6 +191,12 @@ public class Connect4View extends Application implements Observer {
 		});
 	}
 
+	/**
+	 * Creates the circles that represent the slots on the Connect4 game board. Uses a loop
+	 * to create a 7 X 6 board of available slots. Each slot is represented by a VBox containing
+	 * a Circle object.
+	 * 
+	 */
 	private void createConnect4Slots() {
 		int row = 0;
 		int col = 0;
@@ -191,19 +217,21 @@ public class Connect4View extends Application implements Observer {
 		}
 	}
 
+	/**
+	 * Creates the menu bar at the top of the window. It contains a File Menu with a New Game MenuItem. 
+	 * 
+	 * @param stage used to present the board 
+	 * @return a MenuBar item containing the correct Menu and MenuItem
+	 */
 	private MenuBar createMenuBar(Stage stage) {
 		Menu menu = new Menu("File");
 		MenuItem menuItem = new MenuItem("New Game");
-
 		MenuBar menuBar = new MenuBar();
 
 		menuBar.prefWidthProperty().bind(stage.widthProperty());
-
 		menuBar.getMenus().add(menu);
 		menu.getItems().add(menuItem);
 		return menuBar;
 	}
-	
-	
 
 }
