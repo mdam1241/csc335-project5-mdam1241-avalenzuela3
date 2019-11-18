@@ -30,6 +30,7 @@ public class Connect4View extends Application implements Observer {
 	public GridPane grid;
 	public Connect4Model model;
 	public Connect4Controller controller;
+	public NetworkSetupDialogBox setup;
 
 	/* There shouldn't be a reason to make a constructor that asks for other models/controllers
 	 * since Connect4View is the first object to be initialized, which will then construct a new model/controller in init().
@@ -179,6 +180,10 @@ public class Connect4View extends Application implements Observer {
 	private MenuBar createMenuBar(Stage stage) {
 		Menu menu = new Menu("File");
 		MenuItem menuItem = new MenuItem("New Game");
+		setup = new NetworkSetupDialogBox();
+		menuItem.setOnAction((event) -> {
+			setup.show();
+		});
 
 		MenuBar menuBar = new MenuBar();
 

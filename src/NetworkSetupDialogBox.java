@@ -1,4 +1,5 @@
 
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,10 +28,11 @@ public class NetworkSetupDialogBox extends Stage {
 	 */
 	public NetworkSetupDialogBox() {
 		this.initModality(Modality.APPLICATION_MODAL);
-		HBox box0 = new HBox();
-		HBox box1 = new HBox();
-		HBox box2 = new HBox();
-		HBox box3 = new HBox();
+		
+		HBox box0 = new HBox(10);
+		HBox box1 = new HBox(10);
+		HBox box2 = new HBox(10);
+		HBox box3 = new HBox(10);
 		
 		Label  create = new Label("Create:");
 		Label  play   = new Label("Play as:");
@@ -38,50 +40,49 @@ public class NetworkSetupDialogBox extends Stage {
 		Label portLabel = new Label("Port");
 		RadioButton serverButton = new RadioButton("Server");
 		RadioButton clientButton = new RadioButton("Client");
+		serverButton.setSelected(true);
 		serverButton.setOnAction((event) -> {
-			clientButton.disarm(); // Stops user from arming both Server and Client buttons
+			clientButton.setSelected(false); // Stops user from arming both Server and Client buttons
 		});
 		clientButton.setOnAction((event) -> {
-			serverButton.disarm();
+			serverButton.setSelected(false);
 		});
 		RadioButton humanButton = new RadioButton("Human");
 		RadioButton computerButton = new RadioButton("Computer");
+		humanButton.setSelected(true);
 		humanButton.setOnAction((event) -> {
-			computerButton.disarm(); // Stops user from arming both Human and Computer buttons
+			computerButton.setSelected(false); // Stops user from arming both Human and Computer buttons
 		});
 		computerButton.setOnAction((event) -> {
-			humanButton.disarm();
+			humanButton.setSelected(false);
 		});
 		TextField serverText = new TextField("localhost");
-		serverText.setPrefWidth(100); // Change this if it doesn't look right.
+		serverText.setPrefWidth(125);
 		TextField portText = new TextField("4000");
-		portText.setPrefWidth(100); // Change this if it doesn't look right.
+		portText.setPrefWidth(125);
 		Button ok = new Button("OK");
 		ok.setOnAction((event) -> {
 			// User pressed OK, store all settings in this class.
 			this.confirmSettings = true;
-			this.createServer = serverButton.isArmed() && !clientButton.isArmed();
-			this.playAsHuman = humanButton.isArmed() && !computerButton.isArmed();
+			this.createServer = serverButton.isSelected() && !clientButton.isSelected();
+			this.playAsHuman = humanButton.isSelected() && !computerButton.isSelected();
 			this.server = serverText.getText();
 			this.port = portText.getText();
 			// Now, set all values to default.
-			serverButton.arm();
-			clientButton.disarm();
-			humanButton.arm();
-			computerButton.disarm();
-			serverText.setText("localhost");
-			portText.setText("4000");
+			defaultSetup(serverButton, clientButton, humanButton, computerButton,
+							serverText, portText);
 			this.close();
 		});
 		Button cancel = new Button("Cancel");
 		cancel.setOnAction((event) -> {
 			// User pressed cancel. Set all values to default.
-			serverButton.arm();
-			clientButton.disarm();
-			humanButton.arm();
-			computerButton.disarm();
-			serverText.setText("localhost");
-			portText.setText("4000");
+			this.confirmSettings = false;
+			this.createServer = true;
+			this.playAsHuman = true;
+			this.server = "localhost";
+			this.port = "4000";
+			defaultSetup(serverButton, clientButton, humanButton, computerButton,
+							serverText, portText);
 			this.close();
 		});
 		
@@ -91,27 +92,58 @@ public class NetworkSetupDialogBox extends Stage {
 		box3.getChildren().addAll(ok,cancel);
 		
 		GridPane pane = new GridPane();
-		pane.addColumn(0, box0, box1, box2, box3);
+		pane.addColumn(0, box0,box1,box2,box3);
+		pane.setVgap(20);
+		pane.setPadding(new Insets(16));
 		
-		Scene scene = new Scene(pane,350,400);
+		Scene scene = new Scene(pane,375,175);
 		this.setScene(scene);
 		this.setTitle("Network Setup");
 		// Have the caller use this.show() to show Network Setup window.
 	}
 	
-	public boolean isArmed() {
+	/**
+	 * @return True means the user clicked "OK", false means "Cancel"
+	 */
+	public boolean isOk() {
 		return confirmSettings;
 	}
+	/**
+	 * @return True means "Server" is selected, false means "Client"
+	 */
 	public boolean isServer() {
-		return createServer;
+		return createServer; // 
 	}
+	/**
+	 * @return True means "Human" is selected, false means "Computer"
+	 */
 	public boolean isHuman() {
 		return playAsHuman;
 	}
+	/**
+	 * @return String that is inside server TextField
+	 */
 	public String getServer() {
 		return server;
 	}
+	/**
+	 * @return String that is inside port TextField
+	 */
 	public String getPort() {
 		return port;
+	}
+	
+	/**
+	 * Takes all the inputs of Network Setup and turns them to default values.
+	 */
+	private void defaultSetup(RadioButton serverButton, RadioButton clientButton,
+								RadioButton humanButton, RadioButton computerButton,
+								TextField serverText, TextField portText) {
+		serverButton.setSelected(true);
+		clientButton.setSelected(false);
+		humanButton.setSelected(true);
+		computerButton.setSelected(false);
+		serverText.setText("localhost");
+		portText.setText("4000");
 	}
 }
