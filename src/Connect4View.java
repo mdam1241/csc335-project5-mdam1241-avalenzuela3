@@ -27,14 +27,23 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
-	public GridPane grid = new GridPane();
-	public Connect4Model model = new Connect4Model();
-	public Connect4Controller controller = new Connect4Controller(model, this);
+	public GridPane grid;
+	public Connect4Model model;
+	public Connect4Controller controller;
 
+	/* There shouldn't be a reason to make a constructor that asks for other models/controllers
+	 * since Connect4View is the first object to be initialized, which will then construct a new model/controller in init().
 	public Connect4View(Connect4Model model, Connect4Controller controller) {
 		this.controller = controller;
 		this.model = model;
 		this.model.addObserver(this);
+	}
+	*/
+	@Override
+	public void init() {
+		grid = new GridPane();
+		model = new Connect4Model();
+		controller = new Connect4Controller(model, this);
 	}
 
 	@Override
@@ -52,7 +61,7 @@ public class Connect4View extends Application implements Observer {
 				// below statement is for testing correct spot chosen after user clicks a column
 				System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
 				Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0);
-				if (playerMove.getColor() == playerMove.YELLOW)
+				if (playerMove.getColor() == Connect4MoveMessage.YELLOW)
 					currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
 				else
 					currentSpot.setFill(javafx.scene.paint.Color.RED);
@@ -179,7 +188,5 @@ public class Connect4View extends Application implements Observer {
 		menu.getItems().add(menuItem);
 		return menuBar;
 	}
-	
-	
 
 }
