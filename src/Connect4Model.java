@@ -58,16 +58,19 @@ public class Connect4Model extends Observable {
 			return false;
 		}
 		int i = 0;
+		int row = 0;
 		boolean dropped = false;
 		while (i < row - 1 && !dropped) {
 			if (board[i+1][col] > 0) {
 				board[i][col] = token;
 				dropped = true;
+				row = i;
 			}
 			i++;
 		}
 		if (!dropped) {
-			board[row - 1][col] = token;
+			board[this.row - 1][col] = token;
+			row = this.row;
 		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
 		Connect4MoveMessage moveMsg = new Connect4MoveMessage(row, col, token);
