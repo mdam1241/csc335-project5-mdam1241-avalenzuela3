@@ -87,6 +87,18 @@ public class Connect4View extends Application implements Observer {
 		}
 	}
 	}
+	
+	/**
+	 * Displays an Alert box that notifies the user the column they chose is full.
+	 * Must be called by controller.
+	 */
+	public void fullColumn() {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Error");
+		alert.setHeaderText("Error");
+		alert.setContentText("Column full, pick somewhere else!");
+		alert.showAndWait();
+	}
 
 	/**
 	 * Displays an Alert box that notifies the user they've won. Still needs code to determine who is the winner.
