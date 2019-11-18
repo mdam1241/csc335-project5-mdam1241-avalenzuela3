@@ -1,16 +1,28 @@
 import java.util.Observable;
 
 /**
+ * Holds the board of Connect4.
  * @author Michael Dam, Aaron Valenzuela
  *
+ * Internally uses a 2D array/grid of integers called board.
+ * Board is int row tall and int col wide.
+ * Use board[0][0] to access the top left, board[row-1][0] to access bottom left...
+ * dropToken(token, col) drops a token from top to bottom into the 2D array.
+ * VALID TOKENS:
+ * 1 - YELLOW
+ * 2 - RED
+ * A 0 in the grid means that slot is empty.
+ * Initializing the board fills the grid with 0.
+ * 
+ * When a token is dropped or the board is initialized, all Observers will be notified
+ * and passed the row/col of the position that changed, and the token it changed to.
+ * It will be passed 0 for color when the board is initialized.
  */
 
 public class Connect4Model extends Observable {
 	private int row; 		// # of rows in board
 	private int col; 		// # of columns in board
-	private int[][] board;	// board[0][0] gives the token at the very top left of the board.
-							// board[row][col] gives the token at the bottom right.
-							// For token types: 0 = empty, 1 = yellow, 2 = red
+	private int[][] board;
 	
 	public Connect4Model() {
 		row = 6;
@@ -58,16 +70,19 @@ public class Connect4Model extends Observable {
 			return false;
 		}
 		int i = 0;
+		int row = 0;
 		boolean dropped = false;
 		while (i < row - 1 && !dropped) {
 			if (board[i+1][col] > 0) {
 				board[i][col] = token;
 				dropped = true;
+				row = i;
 			}
 			i++;
 		}
 		if (!dropped) {
-			board[row - 1][col] = token;
+			board[this.row - 1][col] = token;
+			row = this.row - 1;
 		}
 		// NOTIFY OBSERVERS HERE, make sure you pass any info you need in VIEW through here.
 		Connect4MoveMessage moveMsg = new Connect4MoveMessage(row, col, token);
@@ -105,6 +120,9 @@ public class Connect4Model extends Observable {
 		return 0;
 	}
 	
+	/**
+	 * Prints to console what the model looks like in the form of a grid of integers.
+	 */
 	public void printDebug() {
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
@@ -115,6 +133,12 @@ public class Connect4Model extends Observable {
 		System.out.println();
 	}
 	
+	/**
+	 * Checks the token of given position with the 3 positions to the right.
+	 * @param row int row of the position to be checked
+	 * @param col int col of the position to be checked
+	 * @return 0 if token differs, else return that token's value
+	 */
 	private int checkRight(int row, int col) {
 		int token = board[row][col];
 		if (token == 0) { return 0; }
@@ -123,6 +147,12 @@ public class Connect4Model extends Observable {
 		}
 		return token;
 	}
+	/**
+	 * Checks the token of given position with the 3 positions below.
+	 * @param row int row of the position to be checked
+	 * @param col int col of the position to be checked
+	 * @return 0 if token differs, else return that token's value
+	 */
 	private int checkDown(int row, int col) {
 		int token = board[row][col];
 		if (token == 0) { return 0; }
@@ -131,6 +161,12 @@ public class Connect4Model extends Observable {
 		}
 		return token;
 	}
+	/**
+	 * Checks the token of given position with the 3 positions diagonally down right.
+	 * @param row int row of the position to be checked
+	 * @param col int col of the position to be checked
+	 * @return 0 if token differs, else return that token's value
+	 */
 	private int checkDownRight(int row, int col) {
 		int token = board[row][col];
 		if (token == 0) { return 0; }
@@ -139,6 +175,12 @@ public class Connect4Model extends Observable {
 		}
 		return token;
 	}
+	/**
+	 * Checks the token of given position with the 3 positions diagonally upper right.
+	 * @param row int row of the position to be checked
+	 * @param col int col of the position to be checked
+	 * @return 0 if token differs, else return that token's value
+	 */
 	private int checkUpRight(int row, int col) {
 		int token = board[row][col];
 		if (token == 0) { return 0; }
