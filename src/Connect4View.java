@@ -8,9 +8,11 @@ import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -29,11 +31,10 @@ import javafx.scene.shape.Circle;
 public class Connect4View extends Application implements Observer {
 	public GridPane grid = new GridPane();
 	public Connect4Model model = new Connect4Model();
-	public Connect4Controller controller = new Connect4Controller(model, this);
+	public Connect4Controller controller;
 
-	public Connect4View(Connect4Model model, Connect4Controller controller) {
-		this.controller = controller;
-		this.model = model;
+	public Connect4View() {
+		this.controller = new Connect4Controller(this.model);
 		this.model.addObserver(this);
 	}
 
@@ -46,11 +47,11 @@ public class Connect4View extends Application implements Observer {
 			this.newGame(slots);
 		}
 		else {
-			
 		for (Node node : slots) {
 			if (GridPane.getRowIndex(node) == playerMove.getRow() && GridPane.getColumnIndex(node) == playerMove.getColumn()) {
 				// below statement is for testing correct spot chosen after user clicks a column
 				System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
+				
 				Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0);
 				if (playerMove.getColor() == playerMove.YELLOW)
 					currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
@@ -61,10 +62,28 @@ public class Connect4View extends Application implements Observer {
 		}
 		}
 		
+			int winnerNum = ((Connect4Model) observable).checkVictory();
+			
+			if (winnerNum != 0) {
+				displayWinner(winnerNum);
+			}
 		
 	}
 	
 	
+	private void displayWinner(int winnerNum) {
+		String winner = null;
+		if (winnerNum == 1)
+			winner = "Player 1";
+		else
+			winner = "Player 2";
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Message");
+		alert.setHeaderText("Message");
+		alert.setContentText("You won!");
+	}
+
 	/**
 	 * Iterates through all the children of the GridPane that are Circle objects and changes the color of them to white 
 	 * to indicate a new game
@@ -115,9 +134,13 @@ public class Connect4View extends Application implements Observer {
 			@Override
 			public void handle(MouseEvent event) {
 				double xCoord = event.getX();
+				double yCoord = event.getY();
+				VBox currentBox = (VBox) event.getSource();
+				int row = GridPane.getRowIndex(currentBox);
 				int column = calculateColumnClicked(xCoord);
-				
-				// Must now write code to send column # to Controller.
+				System.out.println(event.getY());
+				Connect4MoveMessage moveObj = new Connect4MoveMessage(0, column, row);
+				controller.moveMade(moveObj);				
 			}
 
 			/**
@@ -161,8 +184,9 @@ public class Connect4View extends Application implements Observer {
 			VBox box = new VBox(circle);
 
 			box.setCenterShape(true);
-
 			grid.add(box, col, row);
+			GridPane.setRowIndex(box, row);
+			GridPane.setColumnIndex(box, col);
 			col++;
 		}
 	}
