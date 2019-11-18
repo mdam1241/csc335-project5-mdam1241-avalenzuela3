@@ -72,7 +72,7 @@ public class Connect4Model extends Observable {
 		int i = 0;
 		int row = 0;
 		boolean dropped = false;
-		while (i < row - 1 && !dropped) {
+		while (i < this.row - 1 && !dropped) {
 			if (board[i+1][col] > 0) {
 				board[i][col] = token;
 				dropped = true;

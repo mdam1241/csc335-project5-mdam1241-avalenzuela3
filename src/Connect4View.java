@@ -29,13 +29,25 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
-	public GridPane grid = new GridPane();
-	public Connect4Model model = new Connect4Model();
+	public GridPane grid;
+	public Connect4Model model;
 	public Connect4Controller controller;
+	public NetworkSetupDialogBox setup;
 
-	public Connect4View() {
-		this.controller = new Connect4Controller(this.model);
+	/* There shouldn't be a reason to make a constructor that asks for other models/controllers
+	 * since Connect4View is the first object to be initialized, which will then construct a new model/controller in init().
+	public Connect4View(Connect4Model model, Connect4Controller controller) {
+		this.controller = controller;
+		this.model = model;
 		this.model.addObserver(this);
+	}
+	*/
+	@Override
+	public void init() {
+		grid = new GridPane();
+		model = new Connect4Model();
+		model.addObserver(this);
+		controller = new Connect4Controller(model, this);
 	}
 
 	/**
@@ -226,6 +238,10 @@ public class Connect4View extends Application implements Observer {
 	private MenuBar createMenuBar(Stage stage) {
 		Menu menu = new Menu("File");
 		MenuItem menuItem = new MenuItem("New Game");
+		setup = new NetworkSetupDialogBox();
+		menuItem.setOnAction((event) -> {
+			setup.show();
+		});
 		MenuBar menuBar = new MenuBar();
 
 		menuBar.prefWidthProperty().bind(stage.widthProperty());
