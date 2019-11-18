@@ -44,6 +44,7 @@ public class Connect4View extends Application implements Observer {
 	public void init() {
 		grid = new GridPane();
 		model = new Connect4Model();
+		model.addObserver(this);
 		controller = new Connect4Controller(model, this);
 	}
 
