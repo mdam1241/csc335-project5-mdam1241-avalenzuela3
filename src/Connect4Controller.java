@@ -12,8 +12,9 @@ public class Connect4Controller {
 	public Connect4View view;
 
 	// Constructor
-	public Connect4Controller(Connect4Model model) {
+	public Connect4Controller(Connect4Model model, Connect4View view) {
 		this.model = model;
+		this.view = view;
 	}
 
 	/**
@@ -39,13 +40,9 @@ public class Connect4Controller {
 	 * @param moveObj Object containing a player's token color and the move they made.
 	 */
 	public void moveMade(Connect4MoveMessage moveObj) {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Error");
-		alert.setHeaderText("Error");
-		alert.setContentText("Column full, pick somewhere else!");
 		boolean validMove = model.dropToken(moveObj.getColor(), moveObj.getColumn());
 		if (!validMove) {
-			alert.showAndWait();
+			view.fullColumn();
 		}
 	}
 
