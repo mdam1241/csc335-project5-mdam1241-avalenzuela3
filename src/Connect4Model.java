@@ -50,6 +50,10 @@ public class Connect4Model extends Observable {
 		return board;
 	}
 	
+	public int getCol() {
+		return col;
+	}
+	
 	/**
 	 * Drops a token in a column.
 	 * @param col an int telling which column to drop token in.

@@ -29,6 +29,11 @@ public class NetworkSetupDialogBox extends Stage {
 	 * If something doesn't look right, modify here.
 	 */
 	public NetworkSetupDialogBox() {
+		this.confirmSettings = false;
+		this.createServer = true;
+		this.playAsHuman = true;
+		this.server = "localhost";
+		this.port = 4000;
 		this.initModality(Modality.APPLICATION_MODAL);
 		
 		HBox box0 = new HBox(10);

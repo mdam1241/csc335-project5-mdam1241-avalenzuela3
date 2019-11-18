@@ -105,7 +105,7 @@ public class Connect4View extends Application implements Observer {
 	 * 
 	 * @param winnerNum integer representing the winner.
 	 */
-	private void displayWinner(int winnerNum) {
+	public void displayWinner(int winnerNum) {
 		String winner = null;
 		if (winnerNum == 1)
 			winner = "Player 1";
@@ -253,6 +253,9 @@ public class Connect4View extends Application implements Observer {
 		setup = new NetworkSetupDialogBox();
 		menuItem.setOnAction((event) -> {
 			setup.show();
+		});
+		setup.setOnCloseRequest((event)-> {
+			controller.setupNetwork(setup);
 		});
 		MenuBar menuBar = new MenuBar();
 
