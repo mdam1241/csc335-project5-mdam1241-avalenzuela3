@@ -12,6 +12,7 @@ import javafx.application.Platform;
  * The only public methods are:
  * humanTurn() - to be called by View when user clicks on GUI.
  * setupNetwork() - to be called by View when user closes Network dialog box.
+ * and some getters so that view can determine when to register clicks from user.
  * 
  * When a network is set up, the controller hosting the server will go first as YELLOW.
  * After the host drops the token, the client will go second as RED.
@@ -24,8 +25,8 @@ import javafx.application.Platform;
 
 public class Connect4Controller {
 
-	public Connect4Model model;
-	public Connect4View view;
+	private Connect4Model model;
+	private Connect4View view;
 	
 	// Networking
 	private ServerSocket server;

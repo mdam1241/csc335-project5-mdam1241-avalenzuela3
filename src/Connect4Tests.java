@@ -2,8 +2,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import javafx.application.Application;
-
 /**
  * @author Michael Dam, Aaron Valenzuela
  *
@@ -65,6 +63,7 @@ public class Connect4Tests {
 	@Test
 	void testDrop() {
 		Connect4Model board = new Connect4Model();
+		assertTrue(board.getCol() == 7);
 		assertFalse(board.dropToken(0,0)); // Tried to drop an "empty" token
 		assertFalse(board.dropToken(1, -1)); // Tried to drop a token out of bounds
 		assertFalse(board.dropToken(2, 7)); // Tried to drop a token out of bounds
@@ -87,8 +86,19 @@ public class Connect4Tests {
 		board.printDebug();
 	}
 	@Test
-	void testController() {
+	void testController() { // TODO
 		Connect4View view = new Connect4View();
 		Connect4Controller controller = view.debugGetController();
+		assertTrue(controller.isHuman());
+		assertFalse(controller.isMyTurn());
+		controller.humanTurn(0);
+		controller.setupNetwork(new NetworkSetupDialogBox());
+	}
+	@Test
+	void testMessage() {
+		Connect4MoveMessage msg = new Connect4MoveMessage(1,1,1);
+		assertTrue(msg.getColor() == 1);
+		assertTrue(msg.getColumn() == 1);
+		assertTrue(msg.getRow() == 1);
 	}
 }
