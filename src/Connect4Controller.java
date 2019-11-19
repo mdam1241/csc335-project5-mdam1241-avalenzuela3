@@ -35,7 +35,7 @@ public class Connect4Controller {
 	/**
 	 * Calls the model's initializeBoard() to clear all the slots
 	 */
-	public void newGame() {
+	private void newGame() {
 		model.initializeBoard();
 	}
 
