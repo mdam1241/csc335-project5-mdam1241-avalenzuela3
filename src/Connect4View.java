@@ -1,4 +1,3 @@
-import java.io.ObjectInputStream;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,8 +40,6 @@ public class Connect4View extends Application implements Observer {
 	private Connect4Model model;
 	private Connect4Controller controller;
 	private NetworkSetupDialogBox setup;
-	private Connect4MoveMessage msg;
-	private ObjectInputStream input;
 
 	@Override
 	public void init() {
