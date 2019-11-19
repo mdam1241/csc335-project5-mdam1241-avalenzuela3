@@ -1,10 +1,8 @@
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Observable;
 import java.util.Observer;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -85,17 +83,6 @@ public class Connect4View extends Application implements Observer {
 			}
 		}
 		}
-		if (!controller.isHuman() && controller.isMyTurn()) {
-			System.out.println("Computer's turn!");
-			controller.computerTurn();
-		}
-		/* Moved to controller, displayWinner is publicized
-		int winnerNum = ((Connect4Model) observable).checkVictory(); // Number that represents the winner
-
-		if (winnerNum != 0) { // check for a potential winner
-			displayWinner();
-		}
-		*/
 	}
 	
 	/**
