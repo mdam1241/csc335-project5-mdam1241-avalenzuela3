@@ -64,13 +64,13 @@ public class Connect4View extends Application implements Observer {
 			this.newGame(slots);
 		} else {
 			for (Node node : slots) {
-				if (GridPane.getRowIndex(node) == playerMove.getRow()
+				if (GridPane.getRowIndex(node) == playerMove.getRow() + 1
 						&& GridPane.getColumnIndex(node) == playerMove.getColumn()) {
 					// below statement is for testing correct spot chosen after user clicks a column
 					System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
 
 					Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0); // Current Circle Object
-					if (playerMove.getColor() == playerMove.YELLOW) {
+					if (playerMove.getColor() == Connect4MoveMessage.YELLOW) {
 						currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
 						break;
 					}
@@ -178,13 +178,8 @@ public class Connect4View extends Application implements Observer {
 			@Override
 			public void handle(MouseEvent event) {
 				double xCoord = event.getX();
-				double yCoord = event.getY();
-				VBox currentBox = (VBox) event.getSource();
-				int row = GridPane.getRowIndex(currentBox);
 				int column = calculateColumnClicked(xCoord);
-				System.out.println(event.getY());
-				Connect4MoveMessage moveObj = new Connect4MoveMessage(0, column, row);
-				controller.moveMade(moveObj);
+				controller.humanTurn(column);
 			}
 
 			/**

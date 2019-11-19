@@ -67,7 +67,7 @@ public class Connect4Controller {
 	}
 	/**
 	 * Called by View when the Network Setup dialog box is closed.
-	 * @param setup
+	 * @param setup A custom stage that contains fields for user-given network settings.
 	 */
 	public void setupNetwork(NetworkSetupDialogBox setup) {
 		if (!setup.isOk()) {
