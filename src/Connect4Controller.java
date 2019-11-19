@@ -8,7 +8,18 @@ import javafx.application.Platform;
 
 /**
  * @author Michael Dam, Aaron Valenzuela
- *
+ * Takes input from Connect4View GUI and controls a Connect4Model board.
+ * The only public methods are:
+ * humanTurn() - to be called by View when user clicks on GUI.
+ * setupNetwork() - to be called by View when user closes Network dialog box.
+ * 
+ * When a network is set up, the controller hosting the server will go first as YELLOW.
+ * After the host drops the token, the client will go second as RED.
+ * Human controllers click on the GUI to drop a token into the board.
+ * Computer controllers randomly choose a column to drop a token into.
+ * After every turn, checks the board if there is a victory.
+ * Closes networks, input, and tells view to open a window when a victory is achieved
+ * until a new network is made.
  */
 
 public class Connect4Controller {
@@ -21,7 +32,7 @@ public class Connect4Controller {
 	private Socket connection;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	Connect4MoveMessage msg;
+	private Connect4MoveMessage msg;
 	
 	// Player = 1 for YELLOW, 2 for RED. Host will be YELLOW while client will be RED.
 	// Player 1, Yellow, the Host, will always go first.
@@ -34,8 +45,9 @@ public class Connect4Controller {
 	public Connect4Controller(Connect4Model model, Connect4View view) {
 		this.model = model;
 		this.view = view;
-		player = 1; // TODO: If user clicks on screen before network setup, it will drop yellow tokens for testing.
+		player = 1;
 		human = true;
+		myTurn = false;
 	}
 
 	/**
@@ -44,11 +56,28 @@ public class Connect4Controller {
 	private void newGame() {
 		model.initializeBoard();
 	}
+	/**
+	 * @return If the user controlling this is human.
+	 */
 	public boolean isHuman() {
 		return human;
 	}
+	/**
+	 * @return If it is this controller's turn to drop a token.
+	 */
 	public boolean isMyTurn() {
 		return myTurn;
+	}
+	
+	/**
+	 * Checks if it is the controller's turn.
+	 * If it is a computer, calls computerTurn();
+	 * Otherwise, waits for GUI to call humanTurn();
+	 */
+	public void checkTurn() {
+		if (myTurn && !human) {
+			computerTurn();
+		}
 	}
 	/**
 	 * This method is called by the View when a column has been clicked by the user. 
@@ -71,8 +100,9 @@ public class Connect4Controller {
 	/**
 	 * This method should be called when it is this controller's turn and controller is set to Computer
 	 */
-	public void computerTurn() {
+	private void computerTurn() {
 		if (!checkWinner()) { // Checks if there is a winner before doing a move
+			
 			boolean validMove = false;
 			int randomCol = 0;
 			while (!validMove) {
@@ -82,8 +112,10 @@ public class Connect4Controller {
 				}
 			}
 			model.dropToken(player,randomCol);
+			
 			try { output.writeObject(new Connect4MoveMessage(0, randomCol, player)); }
 			catch (IOException e) { e.printStackTrace(); }
+
 			if (!checkWinner()) { // Checks if there is a winner after doing a move.
 				theirTurn();
 			}
@@ -94,8 +126,25 @@ public class Connect4Controller {
 	 */
 	private void theirTurn() {
 		myTurn = false;
-		theirTurn their = new theirTurn();
-		Platform.runLater(their);
+		Runnable their = new Runnable() {
+			public void run() {
+				try {
+					msg = (Connect4MoveMessage) input.readObject();
+					Platform.runLater(new Runnable() {
+						public void run() {
+							model.dropToken(msg.getColor(), msg.getColumn());
+							myTurn = true;
+							checkTurn();
+						}
+					});
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		new Thread(their).start();
 	}
 	/**
 	 * Checks if the model returns victory. Identifies whose victory, then tells view to alert player.
@@ -108,12 +157,12 @@ public class Connect4Controller {
 		if (winner == player) {
 			view.displayWinner();
 			closeLooseConnections();
-			// TODO: Tell view to consume any mouse clicks on the board until new network is set up.
+			myTurn = false;
 			return true;
 		} else if (winner > 0) {
-			// TODO: view.displayLoser();
+			// Optional: view.displayLoser();
 			closeLooseConnections();
-			// TODO: Tell view to consume any mouse clicks on the board until new network is set up.
+			myTurn = false;
 			return true;
 		}
 		return false;
@@ -134,31 +183,66 @@ public class Connect4Controller {
 			setupClient(setup);
 		}
 	}
+	/**
+	 * This method should be called when user wants to set up a server.
+	 * @param setup A custom stage that contains fields for user-given network settings.
+	 */
 	private void setupServer(NetworkSetupDialogBox setup) {
-		try {
-			server = new ServerSocket(setup.getPort());
-			connection = server.accept();
-			output = new ObjectOutputStream(connection.getOutputStream());
-			input = new ObjectInputStream(connection.getInputStream());
-			player = 1;
-			human = setup.isHuman();
-			myTurn = true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Runnable task = new Runnable() {
+			public void run() {
+				try {
+					server = new ServerSocket(setup.getPort());
+					connection = server.accept();
+					Platform.runLater(new Runnable() {
+						public void run() {
+							try {
+								output = new ObjectOutputStream(connection.getOutputStream());
+								input = new ObjectInputStream(connection.getInputStream());
+								player = 1;
+								human = setup.isHuman();
+								myTurn = true;
+								checkTurn();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		new Thread(task).start();
 	}
+	/**
+	 * This method should be called when user wants to set up a client.
+	 * @param setup A custom stage that contains fields for user-given network settings.
+	 */
 	private void setupClient(NetworkSetupDialogBox setup) {
-		try {
-			connection = new Socket(setup.getServer(), setup.getPort());
-			output = new ObjectOutputStream(connection.getOutputStream());
-			input = new ObjectInputStream(connection.getInputStream());
-			player = 2;
-			human = setup.isHuman();
-			myTurn = false;
-			theirTurn();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+		Runnable task = new Runnable() {
+			public void run() {
+				try {
+					connection = new Socket(setup.getServer(), setup.getPort());
+					Platform.runLater(new Runnable() {
+						public void run() {
+							try {
+								output = new ObjectOutputStream(connection.getOutputStream());
+								input = new ObjectInputStream(connection.getInputStream());
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							player = 2;
+							human = setup.isHuman();
+							myTurn = false;
+							theirTurn();
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+			}
+		};
+		new Thread(task).start();
 	}
 	/**
 	 * Any connections that the controller has will be closed by this method.
@@ -179,19 +263,6 @@ public class Connect4Controller {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-	private class theirTurn implements Runnable {
-		public void run() {
-			try {
-				msg = (Connect4MoveMessage) input.readObject();
-				model.dropToken(msg.getColor(), msg.getColumn());
-				myTurn = true;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 }
