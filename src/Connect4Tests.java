@@ -82,4 +82,5 @@ public class Connect4Tests {
 		assertTrue(board.checkVictory() == 1);
 		board.printDebug();
 	}
+	
 }
