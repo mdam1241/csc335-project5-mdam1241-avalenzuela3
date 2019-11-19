@@ -48,6 +48,14 @@ public class Connect4View extends Application implements Observer {
 		model.addObserver(this);
 		controller = new Connect4Controller(model, this);
 	}
+	
+	/**
+	 * For debugging and unit-testing purposes.
+	 * @return The controller that this view uses.
+	 */
+	public Connect4Controller debugGetController() {
+		return controller;
+	}
 
 	/**
 	 * This method is called when a change has been made in the Model in cases where a player makes a move,

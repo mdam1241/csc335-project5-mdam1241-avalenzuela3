@@ -84,5 +84,9 @@ public class Connect4Tests {
 		assertTrue(board.checkVictory() == 1);
 		board.printDebug();
 	}
-	
+	@Test
+	void testController() {
+		Connect4View view = new Connect4View();
+		Connect4Controller controller = view.debugGetController();
+	}
 }
