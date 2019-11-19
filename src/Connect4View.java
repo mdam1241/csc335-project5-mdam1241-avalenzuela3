@@ -83,7 +83,7 @@ public class Connect4View extends Application implements Observer {
 		int winnerNum = ((Connect4Model) observable).checkVictory(); // Number that represents the winner
 
 		if (winnerNum != 0) { // check for a potential winner
-			displayWinner(winnerNum);
+			displayWinner();
 		}
 	}
 	}
@@ -105,17 +105,12 @@ public class Connect4View extends Application implements Observer {
 	 * 
 	 * @param winnerNum integer representing the winner.
 	 */
-	public void displayWinner(int winnerNum) {
-		String winner = null;
-		if (winnerNum == 1)
-			winner = "Player 1";
-		else
-			winner = "Player 2";
-
+	public void displayWinner() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Message");
 		alert.setHeaderText("Message");
 		alert.setContentText("You won!");
+		alert.showAndWait();
 	}
 
 	/**

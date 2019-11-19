@@ -33,10 +33,22 @@ public class Connect4Controller {
 		model.initializeBoard();
 	}
 
+	/**
+	 * This method is called by the View when a column has been clicked by the user. 
+	 * The controller determines whether the column clicked is full or not and changes 
+	 * the model if is not. If it is, it displays an Error message
+	 * 
+	 * @param col int column index that user clicked on.
+	 */
 	public void humanTurn(int col) {
-		model.dropToken(1, col); // TODO: This ASSUMES the current controller represents YELLOW.
+		if (!model.dropToken(1, col)) {// TODO: This ASSUMES the current controller represents YELLOW.
+			view.fullColumn();
+		}
 	}
 
+	/**
+	 * This method should be called when it is this controller's turn and controller is set to Computer
+	 */
 	public void computerTurn() {
 		boolean validMove = false;
 		int randomCol = 0;
@@ -62,7 +74,7 @@ public class Connect4Controller {
 		if (!validMove) {
 			view.fullColumn();
 		} else if (winner > 0) {
-			view.displayWinner(winner);
+			view.displayWinner();
 		}
 	}
 	/**
