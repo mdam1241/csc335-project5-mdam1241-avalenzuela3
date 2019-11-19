@@ -2,6 +2,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.application.Application;
+
 /**
  * @author Michael Dam, Aaron Valenzuela
  *
@@ -86,13 +88,12 @@ public class Connect4Tests {
 		board.printDebug();
 	}
 	@Test
-	void testController() { // TODO
-		Connect4View view = new Connect4View();
-		Connect4Controller controller = view.debugGetController();
-		assertTrue(controller.isHuman());
+	void testController() {
+		Connect4Controller controller = new Connect4Controller(new Connect4Model(), new Connect4View());
+		assertTrue(controller.isHuman()); // Default values before network is set up.
 		assertFalse(controller.isMyTurn());
-		controller.humanTurn(0);
-		controller.setupNetwork(new NetworkSetupDialogBox());
+		// Controller is too dependent on input from classes running on JavaFX threads to unit test.
+		// Must run 2 Applications, connect network, and play game to test controller.
 	}
 	@Test
 	void testMessage() {
