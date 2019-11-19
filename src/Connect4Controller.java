@@ -74,7 +74,7 @@ public class Connect4Controller {
 	 * If it is a computer, calls computerTurn();
 	 * Otherwise, waits for GUI to call humanTurn();
 	 */
-	public void checkTurn() {
+	private void checkTurn() {
 		if (myTurn && !human) {
 			computerTurn();
 		}
