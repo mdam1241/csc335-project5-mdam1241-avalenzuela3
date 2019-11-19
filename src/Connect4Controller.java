@@ -62,7 +62,7 @@ public class Connect4Controller {
 		if (!validMove) {
 			view.fullColumn();
 		} else if (winner > 0) {
-			view.displayWinner(winner, moveObj.getColor());
+			view.displayWinner(winner);
 		}
 	}
 	/**
