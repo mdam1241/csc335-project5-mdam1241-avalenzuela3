@@ -13,7 +13,13 @@ import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
- * A custom stage acting as a dialog box for network setup.
+ * A custom stage acting as a dialog box for network setup. This window appears
+ * when the user clicks "New Game" in the menu bar. This class Sets up the
+ * network based on what the user has chosen to be. The user has an option of
+ * being the Server or the Client, or to play as a human or let the computer
+ * play for you. The network is setup upon the user clicking the OK button in
+ * the dialog box via an ActionEvent. If the user clicks the cancel button, a
+ * network connection will not be established and the dialog window closes.
  * @author Michael Dam, Aaron Valenzuela
  */
 public class NetworkSetupDialogBox extends Stage {
