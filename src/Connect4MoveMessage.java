@@ -2,7 +2,9 @@ import java.io.Serializable;
 
 /**
  * @author Michael Dam, Aaron Valenzuela
- *
+ * Passed through a connection between two Connect4Controllers.
+ * Relays information needed to know about the other controller's
+ * move so that their local model can be updated.
  */
 
 public class Connect4MoveMessage implements Serializable {
