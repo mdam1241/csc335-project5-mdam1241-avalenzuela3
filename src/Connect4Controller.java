@@ -25,8 +25,8 @@ import javafx.application.Platform;
 
 public class Connect4Controller {
 
-	public Connect4Model model;
-	public Connect4View view;
+	private Connect4Model model;
+	private Connect4View view;
 	
 	// Networking
 	private ServerSocket server;
