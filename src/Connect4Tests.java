@@ -2,6 +2,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.application.Application;
+
 /**
  * @author Michael Dam, Aaron Valenzuela
  *
@@ -83,6 +85,18 @@ public class Connect4Tests {
 		board.dropToken(1, 3);
 		assertTrue(board.checkVictory() == 1);
 		board.printDebug();
-	}
+	}	
 	
+	@Test
+	void testController() {
+		Connect4Model model = new Connect4Model();
+		Connect4View view = new Connect4View();
+		view.init();
+		Connect4Controller controller = new Connect4Controller(model, view);
+		controller.isHuman();
+		controller.isMyTurn();
+		NetworkSetupDialogBox setup = new NetworkSetupDialogBox();
+		controller.setupNetwork(setup);
+		
+	}
 }
