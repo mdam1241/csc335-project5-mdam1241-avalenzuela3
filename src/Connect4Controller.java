@@ -32,7 +32,7 @@ public class Connect4Controller {
 	private Socket connection;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	Connect4MoveMessage msg;
+	private Connect4MoveMessage msg;
 	
 	// Player = 1 for YELLOW, 2 for RED. Host will be YELLOW while client will be RED.
 	// Player 1, Yellow, the Host, will always go first.
