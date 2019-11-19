@@ -19,24 +19,46 @@ public class Connect4Controller {
 	private Socket connection;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
+	
+	// Player = 1 for YELLOW, 2 for RED. Host will be YELLOW while client will be RED.
+	// Player 1, Yellow, the Host, will always go first.
+	// Player 2, Red, the Client, will always go second.
+	private int player;
 
 	// Constructor
 	public Connect4Controller(Connect4Model model, Connect4View view) {
 		this.model = model;
 		this.view = view;
+		player = 1; // TODO: If user clicks on screen before network setup, it will drop yellow tokens for testing.
 	}
 
 	/**
-	 * Calls the model's initiliazeBoardMethod() to clear all the slots
+	 * Calls the model's initializeBoard() to clear all the slots
 	 */
-	public void newGame() {
+	private void newGame() {
 		model.initializeBoard();
 	}
 
+	/**
+	 * This method is called by the View when a column has been clicked by the user. 
+	 * The controller determines whether the column clicked is full or not and changes 
+	 * the model if is not. If it is, it displays an Error message
+	 * 
+	 * @param col int column index that user clicked on.
+	 */
 	public void humanTurn(int col) {
-		model.dropToken(1, col); // TODO: This ASSUMES the current controller represents YELLOW.
+		if (!model.dropToken(player, col)) {
+			view.fullColumn();
+		} else {
+			try { output.writeObject(new Connect4MoveMessage(0, col, player)); }
+			catch (IOException e) { e.printStackTrace(); }
+			theirTurn();
+		}
 	}
 
+	/**
+	 * This method should be called when it is this controller's turn and controller is set to Computer
+	 */
 	public void computerTurn() {
 		boolean validMove = false;
 		int randomCol = 0;
@@ -46,25 +68,23 @@ public class Connect4Controller {
 				validMove = true;
 			}
 		}
-		model.dropToken(1,randomCol); // TODO: This ASSUMES the current controller represents YELLOW.
+		model.dropToken(player,randomCol);
+		theirTurn();
 	}
-
 	/**
-	 * This method is called by the View when a column has been clicked by the user. 
-	 * The controller determines whether the column clicked is full or not and changes 
-	 * the model if is not. If it is, it displays an Error message
-	 * 
-	 * @param moveObj Object containing a player's token color and the move they made.
+	 * This method should be called when it is the other controller's turn.
 	 */
-	public void moveMade(Connect4MoveMessage moveObj) {
-		boolean validMove = model.dropToken(moveObj.getColor(), moveObj.getColumn());
-		int winner = model.checkVictory();
-		if (!validMove) {
-			view.fullColumn();
-		} else if (winner > 0) {
-			view.displayWinner(winner);
+	private void theirTurn() {
+		try {
+			Connect4MoveMessage msg = (Connect4MoveMessage) input.readObject();
+			model.dropToken(msg.getColor(), msg.getColumn());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
+	
 	/**
 	 * Called by View when the Network Setup dialog box is closed.
 	 * @param setup A custom stage that contains fields for user-given network settings.
@@ -73,6 +93,7 @@ public class Connect4Controller {
 		if (!setup.isOk()) {
 			return;
 		}
+		newGame();
 		closeLooseConnections();
 		if (setup.isServer()) {
 			setupServer(setup);
@@ -84,10 +105,9 @@ public class Connect4Controller {
 		try {
 			server = new ServerSocket(setup.getPort());
 			connection = server.accept();
-			output = new
-				ObjectOutputStream(connection.getOutputStream());
-			input = new 
-				ObjectInputStream(connection.getInputStream());
+			output = new ObjectOutputStream(connection.getOutputStream());
+			input = new ObjectInputStream(connection.getInputStream());
+			player = 1;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -97,6 +117,8 @@ public class Connect4Controller {
 			connection = new Socket(setup.getServer(), setup.getPort());
 			output = new ObjectOutputStream(connection.getOutputStream());
 			input = new ObjectInputStream(connection.getInputStream());
+			player = 2;
+			theirTurn();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
