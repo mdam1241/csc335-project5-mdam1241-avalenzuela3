@@ -24,11 +24,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 /**
- * This class represents the view of the Connect4 board. It uses a GridPane to display the board with Circle
- * objects contained in VBoxes to display each slot of the game board. The entire GridPane has an onClickEvent handler
- * that sends to the controller what column has been clicked in order to drop a token in it and sends the controller the information. 
- * The View receives the message from the model that was just changed and updates the View to add a token to that column, or it displays
- * an error message if the column is full.
+ * This class represents the view of the Connect4 board. It uses a GridPane to
+ * display the board with Circle objects contained in VBoxes to display each
+ * slot of the game board. The entire GridPane has an onClickEvent handler that
+ * sends to the controller what column has been clicked in order to drop a token
+ * in it and sends the controller the information. The View receives the message
+ * from the model that was just changed and updates the View to add a token to
+ * that column, or it displays an error message if the column is full in its
+ * update function.
  * 
  * 
  * @author Michael Dam, Aaron Valenzuela
@@ -58,9 +61,11 @@ public class Connect4View extends Application implements Observer {
 	}
 
 	/**
-	 * This method is called when a change has been made in the Model in cases where a player makes a move,
-	 * a winner has been determined, or a new game has been requested to start. It iterates through an enhanced 
-	 * for loop of the GridPane's children that represent the Connect 4 board in order to change the correct slot.
+	 * This method is called when a change has been made in the Model in cases where
+	 * a player makes a move, a winner has been determined, or a new game has been
+	 * requested to start. It iterates through an enhanced for loop of the
+	 * GridPane's children that represent the Connect 4 board in order to change the
+	 * correct slot.
 	 */
 	@Override
 	public void update(Observable observable, Object moveMsg) {
@@ -80,19 +85,19 @@ public class Connect4View extends Application implements Observer {
 					if (playerMove.getColor() == Connect4MoveMessage.YELLOW) {
 						currentSpot.setFill(javafx.scene.paint.Color.YELLOW);
 						break;
-					}
-					else {
+					} else {
 						currentSpot.setFill(javafx.scene.paint.Color.RED);
 						break;
+					}
 				}
-			}
+      }
 		}
 		}
 	}
 	
 	/**
 	 * Displays an Alert box that notifies the user the column they chose is full.
-	 * Must be called by controller.
+	 * Must be called by the controller.
 	 */
 	public void fullColumn() {
 		Alert alert = new Alert(AlertType.ERROR);
@@ -103,12 +108,15 @@ public class Connect4View extends Application implements Observer {
 	}
 
 	/**
-	 * Displays an Alert box that notifies the user they've won. Still needs code to determine who is the winner.
+	 * Displays an Alert box that notifies the user they've won. Still needs code to
+	 * determine who is the winner.
 	 * 
 	 * @param winnerNum integer representing the winner.
-	 * @param color 
+	 * @param color
 	 */
+
 	public void displayWinner() {
+
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Message");
 		alert.setHeaderText("Message");
@@ -130,12 +138,10 @@ public class Connect4View extends Application implements Observer {
 		}
 	}
 
-	
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Connect 4");
 		MenuBar menuBar = createMenuBar(stage);
-
 		VBox menuBox = new VBox(menuBar);
 
 		createConnect4Slots();
@@ -149,7 +155,6 @@ public class Connect4View extends Application implements Observer {
 
 		Scene scene = new Scene(gameBoard, 350, 340);
 		stage.setScene(scene);
-
 		// show the running app:
 		stage.show();
 	}
@@ -213,9 +218,9 @@ public class Connect4View extends Application implements Observer {
 	}
 
 	/**
-	 * Creates the circles that represent the slots on the Connect4 game board. Uses a loop
-	 * to create a 7 X 6 board of available slots. Each slot is represented by a VBox containing
-	 * a Circle object.
+	 * Creates the circles that represent the slots on the Connect4 game board. Uses
+	 * a loop to create a 7 X 6 board of available slots. Each slot is represented
+	 * by a VBox containing a Circle object.
 	 * 
 	 */
 	private void createConnect4Slots() {
@@ -239,9 +244,10 @@ public class Connect4View extends Application implements Observer {
 	}
 
 	/**
-	 * Creates the menu bar at the top of the window. It contains a File Menu with a New Game MenuItem. 
+	 * Creates the menu bar at the top of the window. It contains a File Menu with a
+	 * New Game MenuItem.
 	 * 
-	 * @param stage used to present the board 
+	 * @param stage used to present the board
 	 * @return a MenuBar item containing the correct Menu and MenuItem
 	 */
 	private MenuBar createMenuBar(Stage stage) {
@@ -252,6 +258,7 @@ public class Connect4View extends Application implements Observer {
 			setup.show();
 		});
 		setup.setOnHidden((event)-> {
+
 			controller.setupNetwork(setup);
 		});
 		MenuBar menuBar = new MenuBar();
