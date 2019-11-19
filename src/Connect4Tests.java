@@ -2,6 +2,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.application.Application;
+
 /**
  * @author Michael Dam, Aaron Valenzuela
  *
