@@ -244,7 +244,7 @@ public class Connect4View extends Application implements Observer {
 		menuItem.setOnAction((event) -> {
 			setup.show();
 		});
-		setup.setOnCloseRequest((event)-> {
+		setup.setOnHidden((event)-> {
 			controller.setupNetwork(setup);
 		});
 		MenuBar menuBar = new MenuBar();
