@@ -94,8 +94,24 @@ public class Connect4Controller {
 	 */
 	private void theirTurn() {
 		myTurn = false;
-		theirTurn their = new theirTurn();
-		Platform.runLater(their);
+		Runnable their = new Runnable() {
+			public void run() {
+				try {
+					msg = (Connect4MoveMessage) input.readObject();
+					Platform.runLater(new Runnable() {
+						public void run() {
+							model.dropToken(msg.getColor(), msg.getColumn());
+							myTurn = true;
+						}
+					});
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		new Thread(their).start();
 	}
 	/**
 	 * Checks if the model returns victory. Identifies whose victory, then tells view to alert player.
@@ -108,12 +124,12 @@ public class Connect4Controller {
 		if (winner == player) {
 			view.displayWinner();
 			closeLooseConnections();
-			// TODO: Tell view to consume any mouse clicks on the board until new network is set up.
+			myTurn = false;
 			return true;
 		} else if (winner > 0) {
-			// TODO: view.displayLoser();
+			// Optional: view.displayLoser();
 			closeLooseConnections();
-			// TODO: Tell view to consume any mouse clicks on the board until new network is set up.
+			myTurn = false;
 			return true;
 		}
 		return false;
@@ -135,30 +151,56 @@ public class Connect4Controller {
 		}
 	}
 	private void setupServer(NetworkSetupDialogBox setup) {
-		try {
-			server = new ServerSocket(setup.getPort());
-			connection = server.accept();
-			output = new ObjectOutputStream(connection.getOutputStream());
-			input = new ObjectInputStream(connection.getInputStream());
-			player = 1;
-			human = setup.isHuman();
-			myTurn = true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Runnable task = new Runnable() {
+			public void run() {
+				try {
+					server = new ServerSocket(setup.getPort());
+					connection = server.accept();
+					Platform.runLater(new Runnable() {
+						public void run() {
+							try {
+								output = new ObjectOutputStream(connection.getOutputStream());
+								input = new ObjectInputStream(connection.getInputStream());
+								player = 1;
+								human = setup.isHuman();
+								myTurn = true;
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		new Thread(task).start();
 	}
 	private void setupClient(NetworkSetupDialogBox setup) {
-		try {
-			connection = new Socket(setup.getServer(), setup.getPort());
-			output = new ObjectOutputStream(connection.getOutputStream());
-			input = new ObjectInputStream(connection.getInputStream());
-			player = 2;
-			human = setup.isHuman();
-			myTurn = false;
-			theirTurn();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+		Runnable task = new Runnable() {
+			public void run() {
+				try {
+					connection = new Socket(setup.getServer(), setup.getPort());
+					Platform.runLater(new Runnable() {
+						public void run() {
+							try {
+								output = new ObjectOutputStream(connection.getOutputStream());
+								input = new ObjectInputStream(connection.getInputStream());
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							player = 2;
+							human = setup.isHuman();
+							myTurn = false;
+							theirTurn();
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+			}
+		};
+		new Thread(task).start();
 	}
 	/**
 	 * Any connections that the controller has will be closed by this method.
@@ -181,12 +223,10 @@ public class Connect4Controller {
 			e.printStackTrace();
 		}
 	}
-	private class theirTurn implements Runnable {
+	public class theirTurn implements Runnable {
 		public void run() {
 			try {
 				msg = (Connect4MoveMessage) input.readObject();
-				model.dropToken(msg.getColor(), msg.getColumn());
-				myTurn = true;
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

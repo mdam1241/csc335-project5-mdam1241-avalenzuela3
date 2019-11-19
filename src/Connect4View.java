@@ -1,7 +1,10 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Observable;
 import java.util.Observer;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -40,6 +43,8 @@ public class Connect4View extends Application implements Observer {
 	private Connect4Model model;
 	private Connect4Controller controller;
 	private NetworkSetupDialogBox setup;
+	private Connect4MoveMessage msg;
+	private ObjectInputStream input;
 
 	@Override
 	public void init() {
@@ -66,7 +71,7 @@ public class Connect4View extends Application implements Observer {
 				if (GridPane.getRowIndex(node) == playerMove.getRow() + 1
 						&& GridPane.getColumnIndex(node) == playerMove.getColumn()) {
 					// below statement is for testing correct spot chosen after user clicks a column
-					System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
+					// System.out.println("CIRCLE AT:" + playerMove.getRow() + ": " + playerMove.getColumn());
 
 					Circle currentSpot = (Circle) ((VBox) node).getChildren().get(0); // Current Circle Object
 					if (playerMove.getColor() == Connect4MoveMessage.YELLOW) {
@@ -81,6 +86,7 @@ public class Connect4View extends Application implements Observer {
 		}
 		}
 		if (!controller.isHuman() && controller.isMyTurn()) {
+			System.out.println("Computer's turn!");
 			controller.computerTurn();
 		}
 		/* Moved to controller, displayWinner is publicized
@@ -179,7 +185,9 @@ public class Connect4View extends Application implements Observer {
 			public void handle(MouseEvent event) {
 				double xCoord = event.getX();
 				int column = calculateColumnClicked(xCoord);
-				if (model.getBoard()[0][column] == 0 && controller.isHuman() && controller.isMyTurn()) {
+				if (model.getBoard()[0][column] != 0) {
+					fullColumn();
+				} else if (controller.isHuman() && controller.isMyTurn()) {
 					controller.humanTurn(column);
 				}
 			}
