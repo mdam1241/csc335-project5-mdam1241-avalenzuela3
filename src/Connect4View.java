@@ -29,19 +29,11 @@ import javafx.scene.shape.Circle;
  */
 
 public class Connect4View extends Application implements Observer {
-	public GridPane grid;
-	public Connect4Model model;
-	public Connect4Controller controller;
-	public NetworkSetupDialogBox setup;
+	private GridPane grid;
+	private Connect4Model model;
+	private Connect4Controller controller;
+	private NetworkSetupDialogBox setup;
 
-	/* There shouldn't be a reason to make a constructor that asks for other models/controllers
-	 * since Connect4View is the first object to be initialized, which will then construct a new model/controller in init().
-	public Connect4View(Connect4Model model, Connect4Controller controller) {
-		this.controller = controller;
-		this.model = model;
-		this.model.addObserver(this);
-	}
-	*/
 	@Override
 	public void init() {
 		grid = new GridPane();
@@ -80,12 +72,17 @@ public class Connect4View extends Application implements Observer {
 				}
 			}
 		}
+		}
+		if (!controller.isHuman() && controller.isMyTurn()) {
+			controller.computerTurn();
+		}
+		/* Moved to controller, displayWinner is publicized
 		int winnerNum = ((Connect4Model) observable).checkVictory(); // Number that represents the winner
 
 		if (winnerNum != 0) { // check for a potential winner
 			displayWinner();
 		}
-	}
+		*/
 	}
 	
 	/**
@@ -174,7 +171,9 @@ public class Connect4View extends Application implements Observer {
 			public void handle(MouseEvent event) {
 				double xCoord = event.getX();
 				int column = calculateColumnClicked(xCoord);
-				controller.humanTurn(column);
+				if (model.getBoard()[0][column] == 0 && controller.isHuman() && controller.isMyTurn()) {
+					controller.humanTurn(column);
+				}
 			}
 
 			/**
