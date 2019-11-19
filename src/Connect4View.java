@@ -24,6 +24,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 /**
+ * This class represents the view of the Connect4 board. It uses a GridPane to display the board with Circle
+ * objects contained in VBoxes to display each slot of the game board. The entire GridPane has an onClickEvent handler
+ * that sends to the controller what column has been clicked in order to drop a token in it and sends the controller the information. 
+ * The View receives the message from the model that was just changed and updates the View to add a token to that column, or it displays
+ * an error message if the column is full.
+ * 
+ * 
  * @author Michael Dam, Aaron Valenzuela
  *
  */
@@ -104,6 +111,7 @@ public class Connect4View extends Application implements Observer {
 	 * Displays an Alert box that notifies the user they've won. Still needs code to determine who is the winner.
 	 * 
 	 * @param winnerNum integer representing the winner.
+	 * @param color 
 	 */
 	public void displayWinner() {
 		Alert alert = new Alert(AlertType.INFORMATION);
