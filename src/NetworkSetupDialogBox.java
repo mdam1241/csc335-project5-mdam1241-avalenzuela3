@@ -5,10 +5,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 
 /**
  * A custom stage acting as a dialog box for network setup.
@@ -20,13 +22,18 @@ public class NetworkSetupDialogBox extends Stage {
 	private boolean createServer; // false = createClient
 	private boolean playAsHuman; // false = playAsComputer
 	private String server;
-	private String port;
+	private int port;
 	
 	/**
 	 * Constructs the scene, and sets the scene for this stage.
 	 * If something doesn't look right, modify here.
 	 */
 	public NetworkSetupDialogBox() {
+		this.confirmSettings = false;
+		this.createServer = true;
+		this.playAsHuman = true;
+		this.server = "localhost";
+		this.port = 4000;
 		this.initModality(Modality.APPLICATION_MODAL);
 		
 		HBox box0 = new HBox(10);
@@ -58,7 +65,9 @@ public class NetworkSetupDialogBox extends Stage {
 		});
 		TextField serverText = new TextField("localhost");
 		serverText.setPrefWidth(125);
-		TextField portText = new TextField("4000");
+		TextField portText = new TextField();
+		portText.setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
+		portText.setText("4000");
 		portText.setPrefWidth(125);
 		Button ok = new Button("OK");
 		ok.setOnAction((event) -> {
@@ -67,7 +76,7 @@ public class NetworkSetupDialogBox extends Stage {
 			this.createServer = serverButton.isSelected() && !clientButton.isSelected();
 			this.playAsHuman = humanButton.isSelected() && !computerButton.isSelected();
 			this.server = serverText.getText();
-			this.port = portText.getText();
+			this.port = Integer.parseInt(portText.getText());
 			// Now, set all values to default.
 			defaultSetup(serverButton, clientButton, humanButton, computerButton,
 							serverText, portText);
@@ -80,7 +89,7 @@ public class NetworkSetupDialogBox extends Stage {
 			this.createServer = true;
 			this.playAsHuman = true;
 			this.server = "localhost";
-			this.port = "4000";
+			this.port = 4000;
 			defaultSetup(serverButton, clientButton, humanButton, computerButton,
 							serverText, portText);
 			this.close();
@@ -129,7 +138,7 @@ public class NetworkSetupDialogBox extends Stage {
 	/**
 	 * @return String that is inside port TextField
 	 */
-	public String getPort() {
+	public int getPort() {
 		return port;
 	}
 	

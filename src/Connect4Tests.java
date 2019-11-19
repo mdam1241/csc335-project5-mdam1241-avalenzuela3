@@ -67,7 +67,9 @@ public class Connect4Tests {
 		assertFalse(board.dropToken(1, -1)); // Tried to drop a token out of bounds
 		assertFalse(board.dropToken(2, 7)); // Tried to drop a token out of bounds
 		board.dropToken(1, 0);
+		board.printDebug();
 		board.dropToken(1, 0);
+		board.printDebug();
 		board.dropToken(1,1);
 		board.dropToken(2, 6);
 		assertFalse(board.checkVictory() > 0);
